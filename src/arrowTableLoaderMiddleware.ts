@@ -1,3 +1,4 @@
+export const x = 1;
 // import * as Redux from 'redux';
 // import * as Arrow from 'apache-arrow';
 

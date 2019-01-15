@@ -1,29 +1,38 @@
 {
-  "name": "arrow-explorer",
+  "name": "arrow-viewer",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "apache-arrow": "graphistry/arrow#348d735ef44f68199e7e6b66778a5bbda5f8d99c",
-    "react": "^16.7.0-alpha",
-    "react-dom": "^16.7.0-alpha",
-    "react-scripts-ts": "3.1.0",
-    "react-virtualized": "9.21.0",
+    "@types/jest": "23.3.12",
+    "@types/node": "10.12.18",
+    "@types/react": "16.7.18",
+    "@types/react-dom": "16.0.11",
+    "@types/react-virtualized": "9.18.11",
+    "apache-arrow": "graphistry/arrow#js-data-refactor",
+    "ix": "2.5.1",
+    "react": "next",
     "react-clock": "2.3.0",
-    "ix": "2.3.5"
-  },
-  "scripts": {
-    "start": "react-scripts-ts start",
-    "build": "react-scripts-ts build",
-    "test": "react-scripts-ts test --env=jsdom",
-    "eject": "react-scripts-ts eject"
+    "react-dom": "next",
+    "react-virtualized": "9.21.0"
   },
   "devDependencies": {
-    "@types/jest": "^23.3.9",
-    "@types/node": "^10.12.2",
-    "@types/react": "^16.4.18",
-    "@types/react-dom": "^16.0.9",
-    "@types/react-virtualized": "9.18.7",
-    "@types/recompose": "0.27.0",
-    "typescript": "^3.1.6"
-  }
+    "react-scripts": "next",
+    "typescript": "3.2.2"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject"
+  },
+  "eslintConfig": {
+    "extends": "react-app"
+  },
+  "eslintIgnore": ["**/*.js", "**/*.ts"],
+  "browserslist": [
+    ">0.2%",
+    "not dead",
+    "not ie <= 11",
+    "not op_mini all"
+  ]
 }

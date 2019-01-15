@@ -1,9 +1,9 @@
 import * as React from 'react';
 import * as Arrow from 'apache-arrow';
-import { valueToString } from 'apache-arrow/util/pretty';
+import { valueToString } from 'apache-arrow//util/pretty';
 
 import * as ReactVirtualized from 'react-virtualized';
-import { Table, Column, AutoSizer } from 'react-virtualized';
+import { Table as TableView, Column as ColumnView, AutoSizer } from 'react-virtualized';
 
 import 'react-virtualized/styles.css';
 import { useWindowSize } from './hooks/useWindowSize';
@@ -39,7 +39,7 @@ function ArrowTableGrid({ table, width, height }: { table: Arrow.Table, width: n
   return (
     <AutoSizer disableHeight>
       {(size) => (
-      <Table
+      <TableView
         {...size}
         height={height - 4}
         rowGetter={rowGetter}
@@ -52,7 +52,7 @@ function ArrowTableGrid({ table, width, height }: { table: Arrow.Table, width: n
         headerRowRenderer={headerRowRenderer}
         >
         {table.schema.fields.map((field, idx) => (
-          <Column
+          <ColumnView
             width={25}
             minWidth={25}
             flexGrow={1}
@@ -62,7 +62,7 @@ function ArrowTableGrid({ table, width, height }: { table: Arrow.Table, width: n
             headerRenderer={headerRenderer}
             />
         ))}
-      </Table>
+      </TableView>
       )}
       </AutoSizer>
     );
