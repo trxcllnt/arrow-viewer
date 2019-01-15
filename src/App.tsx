@@ -1,75 +1,84 @@
 import * as React from 'react';
 import * as Arrow from 'apache-arrow';
-import { valueToString } from 'apache-arrow//util/pretty';
-
-import * as ReactVirtualized from 'react-virtualized';
-import { Table as TableView, Column as ColumnView, AutoSizer } from 'react-virtualized';
+import { valueToString } from 'apache-arrow/util/pretty';
 
 import 'react-virtualized/styles.css';
+import * as ReactVirtualized from 'react-virtualized';
+import { MultiGrid, CellMeasurer, CellMeasurerCache } from 'react-virtualized';
+
 import { useWindowSize } from './hooks/useWindowSize';
 import { useArrowTableFromFileInput } from './hooks/useArrowTable';
-import { defaultRowRenderer } from 'react-virtualized/dist/es/Table';
 
 export function App() {
 
   const [size] = useWindowSize();
-  const [table, fileInput] = useArrowTableFromFileInput();
+  const [table, cellMeasurerCache, fileInput] = useArrowTableFromFileInput();
 
   return (
-    table
-      ? <ArrowTableGrid {...size} table={table} />
-      : <input {...fileInput}></input>
+    <>
+      <input {...fileInput}></input>
+      {!table ? undefined : 
+        <ArrowTableGrid
+          table={table}
+          width={size.width-4}
+          height={size.height-24}
+          cellMeasurerCache={cellMeasurerCache}
+          />
+      }
+    </>
   );
 }
 
-function ArrowTableGrid({ table, width, height }: { table: Arrow.Table, width: number, height: number }): JSX.Element {
-
-  const rowGetter = ({ index }: ReactVirtualized.Index) => table.get(index);
-  const cellRenderer = ({ cellData }: ReactVirtualized.TableCellProps) => valueToString(cellData);
-  const headerRenderer = ({ label }: ReactVirtualized.TableHeaderProps) => label;
-  const rowRenderer = (props: ReactVirtualized.TableRowProps) => defaultRowRenderer({
-    ...props, style: { ...props.style, width: props.style.width - 15 }
-  });
-  const headerRowRenderer = ({ className, columns, style }: ReactVirtualized.TableHeaderRowProps) => (
-    <div role='row' className={className} style={{ ...style, ...headerStyle(), width: width - 15 }}>
-      {columns}
-    </div>
-  );
-
-  return (
-    <AutoSizer disableHeight>
-      {(size) => (
-      <TableView
-        {...size}
-        height={height - 4}
-        rowGetter={rowGetter}
-        rowHeight={28}
-        headerHeight={25}
-        rowStyle={rowStyle}
-        rowCount={table.length}
-        rowRenderer={rowRenderer}
-        headerStyle={headerStyle()}
-        headerRowRenderer={headerRowRenderer}
-        >
-        {table.schema.fields.map((field, idx) => (
-          <ColumnView
-            width={25}
-            minWidth={25}
-            flexGrow={1}
-            dataKey={idx}
-            label={`${field}`}
-            cellRenderer={cellRenderer}
-            headerRenderer={headerRenderer}
-            />
-        ))}
-      </TableView>
-      )}
-      </AutoSizer>
-    );
+interface ArrowTableGridProps {
+  width: number;
+  height: number;
+  rowHeight?: number;
+  headerHeight?: number;
+  table?: Arrow.Table | null;
+  cellMeasurerCache?: CellMeasurerCache | null;
 }
 
-const headerStyle = () => ({ textAlign: 'right', textTransform: 'none' }) as React.CSSProperties;
+function ArrowTableGrid({ table, width, height, cellMeasurerCache, rowHeight = 28, headerHeight = 25 }: ArrowTableGridProps): JSX.Element {
+  return (
+    <MultiGrid
+      fixedRowCount={1}
+      fixedColumnCount={1}
+      width={width}
+      height={height}
+      rowHeight={rowHeight}
+      headerHeight={headerHeight}
+      rowCount={(table && table.length || 0) + 1}
+      columnCount={(table && table.schema.fields.length || 0) + 1}
+      cellRenderer={cellRenderer.bind(0, table!, cellMeasurerCache!)}
+      columnWidth={cellMeasurerCache && cellMeasurerCache.columnWidth || 100}
+      />
+  );
+}
 
-const rowStyle = ({ index }: ReactVirtualized.Index) => index % 2 === 0
-  ? ({ ...headerStyle(), borderBottom: '1px solid #e0e0e0', backgroundColor: '#fff' })
-  : ({ ...headerStyle(), borderBottom: '1px solid #e0e0e0', backgroundColor: '#fafafa' });
+const cellRenderer = (
+    table: Arrow.Table, cellMeasurerCache: CellMeasurerCache,
+    { key, style, rowIndex, columnIndex, parent }: ReactVirtualized.GridCellProps
+) => {
+  let str;
+  style = { ...style, whiteSpace: 'nowrap' };
+  if (!table || (columnIndex === 0 && rowIndex === 0)) {
+    str = '';
+  } else if (columnIndex === 0) {
+    str = `${rowIndex - 1}`;
+  } else if (rowIndex === 0) {
+    str = `${table.schema.fields[columnIndex - 1]}`;
+  } else {
+    style.textAlign = 'right';
+    str = valueToString(table.get(rowIndex - 1).get(columnIndex - 1));
+  }
+  return (
+    <CellMeasurer
+      key={key}
+      parent={parent}
+      rowIndex={rowIndex}
+      cache={cellMeasurerCache}
+      columnIndex={columnIndex}>
+      <div key={key} style={style}><span style={{padding: 5}}>{str}</span></div>
+    </CellMeasurer>
+  );
+};

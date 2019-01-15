@@ -1,26 +1,32 @@
 import * as React from 'react';
 import { Table } from 'apache-arrow';
 import { useInputFile } from './useInputFile';
+import { CellMeasurerCache } from 'react-virtualized';
 
 export function useArrowTableFromFileInput(): [
-   React.HookState<Table | null>,
+   React.HookState<Table> | null,
+   React.HookState<CellMeasurerCache> | null,
    React.DetailedHTMLProps<React.InputHTMLAttributes<HTMLInputElement>, HTMLInputElement>
 ] {
-  var [file, fileInput] = useInputFile();
-  var [arrowTable] = useArrowTableFromFile(file);
-  return [arrowTable, fileInput];
+  const [file, fileInput] = useInputFile();
+  const [table, cellMeasureCache] = useArrowTableFromFile(file);
+  return [table, cellMeasureCache, fileInput];
 }
 
 export function useArrowTableFromFile(file: File | null): [
-  React.HookState<Table | null>
+  React.HookState<Table> | null,
+  React.HookState<CellMeasurerCache> | null
 ] {
-  const [table, setTable] = React.useState<Table | null>(null);
+  const [[table, cellMeasureCache], setTableAndCache] = React.useState<[Table | null, CellMeasurerCache | null] | null>([null, null]);
   const fileReader = React.useMemo(() => {
     const fileReader = new FileReader();
     fileReader.onload = function(event) {
       const array = new Uint8Array((event.target as any).result);
       const table = Table.from([array])
-      setTable(table);
+      const cellMeasureCache = new CellMeasurerCache({
+        defaultWidth: 100, minWidth: 20, fixedHeight: true
+      });
+      setTableAndCache([table, cellMeasureCache]);
     };
     return fileReader;
   }, []);
@@ -30,9 +36,9 @@ export function useArrowTableFromFile(file: File | null): [
       fileReader.readAsArrayBuffer(file);
     }
     else {
-      setTable(null);
+      setTableAndCache([null, null]);
     }
   }, [file]);
 
-  return [table];
+  return [table, cellMeasureCache];
 }
