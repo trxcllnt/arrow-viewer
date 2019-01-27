@@ -47,8 +47,9 @@ function ArrowTableGrid({ table, width, height, cellMeasurerCache, rowHeight = 2
       height={height}
       rowHeight={rowHeight}
       headerHeight={headerHeight}
-      rowCount={(table && table.length || 0) + 1}
-      columnCount={(table && table.schema.fields.length || 0) + 1}
+      rowCount={(table && table.length || 0)}
+      deferredMeasurementCache={cellMeasurerCache!}
+      columnCount={(table && table.schema.fields.length || 0)}
       cellRenderer={cellRenderer.bind(0, table!, cellMeasurerCache!)}
       columnWidth={cellMeasurerCache && cellMeasurerCache.columnWidth || 100}
       />
