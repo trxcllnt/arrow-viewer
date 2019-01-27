@@ -8,7 +8,7 @@
     "@types/react": "16.7.18",
     "@types/react-dom": "16.0.11",
     "@types/react-virtualized": "9.18.11",
-    "apache-arrow": "graphistry/arrow#js-data-refactor",
+    "apache-arrow": "graphistry/arrow#js-data-refactor-main",
     "ix": "2.5.1",
     "react": "next",
     "react-clock": "2.3.0",
