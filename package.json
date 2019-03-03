@@ -3,21 +3,19 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "@types/jest": "23.3.12",
-    "@types/node": "10.12.18",
-    "@types/react": "16.7.18",
-    "@types/react-dom": "16.0.11",
-    "@types/react-virtualized": "9.18.11",
-    "apache-arrow": "graphistry/arrow#js-data-refactor",
-    "ix": "2.5.1",
-    "react": "next",
-    "react-clock": "2.3.0",
-    "react-dom": "next",
+    "@types/jest": "24.0.9",
+    "@types/node": "11.10.4",
+    "@types/react": "16.8.6",
+    "@types/react-dom": "16.8.2",
+    "@types/react-virtualized": "9.18.12",
+    "apache-arrow": "graphistry/arrow",
+    "react": "16.8.3",
+    "react-dom": "16.8.3",
     "react-virtualized": "9.21.0"
   },
   "devDependencies": {
-    "react-scripts": "next",
-    "typescript": "3.2.2"
+    "react-scripts": "2.1.5",
+    "typescript": "3.3.3333"
   },
   "scripts": {
     "start": "react-scripts start",
@@ -28,7 +26,10 @@
   "eslintConfig": {
     "extends": "react-app"
   },
-  "eslintIgnore": ["**/*.js", "**/*.ts"],
+  "eslintIgnore": [
+    "**/*.js",
+    "**/*.ts"
+  ],
   "browserslist": [
     ">0.2%",
     "not dead",

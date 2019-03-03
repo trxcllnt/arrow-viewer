@@ -29,7 +29,7 @@ export function App() {
   );
 }
 
-interface ArrowTableGridProps {
+interface ArrowTableGridProps extends Partial<ReactVirtualized.MultiGridProps> {
   width: number;
   height: number;
   rowHeight?: number;
@@ -38,7 +38,7 @@ interface ArrowTableGridProps {
   cellMeasurerCache?: CellMeasurerCache | null;
 }
 
-function ArrowTableGrid({ table, width, height, cellMeasurerCache, rowHeight = 28, headerHeight = 25 }: ArrowTableGridProps): JSX.Element {
+function ArrowTableGrid({ table, width, height, cellMeasurerCache, rowHeight = 28, headerHeight = 25, ...props }: ArrowTableGridProps): JSX.Element {
   return (
     <MultiGrid
       fixedRowCount={1}
@@ -47,11 +47,12 @@ function ArrowTableGrid({ table, width, height, cellMeasurerCache, rowHeight = 2
       height={height}
       rowHeight={rowHeight}
       headerHeight={headerHeight}
-      rowCount={(table && table.length || 0)}
+      rowCount={(table ? (table.length + 1) : 0)}
       deferredMeasurementCache={cellMeasurerCache!}
-      columnCount={(table && table.schema.fields.length || 0)}
+      columnCount={(table ? (table.schema.fields.length + 1) : 0)}
       cellRenderer={cellRenderer.bind(0, table!, cellMeasurerCache!)}
       columnWidth={cellMeasurerCache && cellMeasurerCache.columnWidth || 100}
+      {...props}
       />
   );
 }
@@ -70,7 +71,9 @@ const cellRenderer = (
     str = `${table.schema.fields[columnIndex - 1]}`;
   } else {
     style.textAlign = 'right';
-    str = valueToString(table.get(rowIndex - 1).get(columnIndex - 1));
+    let row = table.get(rowIndex - 1);
+    let val = row.get(columnIndex - 1);
+    str = valueToString(val);
   }
   return (
     <CellMeasurer
